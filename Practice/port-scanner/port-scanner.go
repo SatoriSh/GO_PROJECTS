@@ -15,7 +15,7 @@ func main() {
 		go scanPort(i)
 	}
 
-	wg.Wait() // ждать конца выполнения горутины (вызывается один раз после ВСЕХ горутин)
+	wg.Wait() // ждать конца выполнения горутин
 
 	sortSlace(&openPorts)
 	for _, v := range openPorts {
