@@ -11,7 +11,7 @@ func echo(conn net.Conn) {
 
 	b := make([]byte, 512)
 	for {
-		size, err := conn.Read(b[0:])
+		size, err := conn.Read(b[0:]) // когда в conn приходят данные, функция Read копирует их в срез b
 		if err == io.EOF {
 			log.Println("Client disconnected")
 			break
