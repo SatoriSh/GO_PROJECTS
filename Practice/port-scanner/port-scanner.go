@@ -51,7 +51,7 @@ func main() {
 }
 
 func worker(ports, results chan int) {
-	for p := range ports { // выполняется пока канал открыт
+	for p := range ports { // выполняется пока канал открыт, RANGE - забирает порт из канала
 		address := fmt.Sprintf("scanme.nmap.org:%d", p)
 		conn, err := net.Dial("tcp", address)
 		if err != nil {
@@ -65,7 +65,7 @@ func worker(ports, results chan int) {
 }
 
 /*
-	func scanPortWithWG(index int) {
+	func scanPortWithWG(index int) { // тут то же самое то с wg.Wait wg.Done wg.Add...
 		defer wg.Done() // горутина завершила работу; DEFER - команда выполнится при ВЫХОДЕ из функции
 
 		var address string = fmt.Sprintf("scanme.nmap.org:%d", index)
@@ -79,6 +79,7 @@ func worker(ports, results chan int) {
 		openPorts = append(openPorts, index)
 	}
 */
+
 func sortSlice(slice *[]int) {
 	var value2 int
 
