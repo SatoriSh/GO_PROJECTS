@@ -10,7 +10,7 @@ func main() {
 	connections := make(chan net.Conn, 100)
 
 	for i := 0; i < cap(connections); i++ {
-		go echoWorker(connections)
+		go worker(connections) // ПАТТЕРН worker pool
 	}
 
 	listener, err := net.Listen("tcp", ":20080")
@@ -19,7 +19,6 @@ func main() {
 	}
 
 	log.Println("Listening on 0.0.0.0:20080")
-
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -29,17 +28,16 @@ func main() {
 	}
 }
 
-func echoWorker(connections chan net.Conn) { // ПАТТЕРН worker pool
+func worker(connections chan net.Conn) { // ПАТТЕРН worker pool
 	for conn := range connections {
-		readAndWriteInConn(conn)
+		echo(conn)
 	}
 }
 
-func readAndWriteInConn(conn net.Conn) {
+func echo(conn net.Conn) {
 	defer conn.Close()
 
 	b := make([]byte, 512)
-
 	for {
 		size, err := conn.Read(b[0:])
 		if err == io.EOF {
