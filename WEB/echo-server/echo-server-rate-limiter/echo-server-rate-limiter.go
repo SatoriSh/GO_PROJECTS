@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	connections := make(chan net.Conn, 100)
+	connections := make(chan net.Conn, 2)
 
 	for i := 0; i < cap(connections); i++ {
 		go worker(connections) // ПАТТЕРН worker pool
