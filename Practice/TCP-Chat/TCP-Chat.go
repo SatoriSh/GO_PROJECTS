@@ -6,20 +6,30 @@ import (
 	"net"
 )
 
-var uniqueAddr net.Addr
+var senderAddr net.Addr
 
-func connWorker(connections chan net.Conn, messages chan string) {
+func connWorker(connections chan net.Conn, messages chan string, connSlice *[]net.Conn) {
 	for conn := range connections {
-		for {
-			reader := bufio.NewReader(conn)
+		reader := bufio.NewReader(conn)
 
+		for {
 			s, err := reader.ReadString('\n')
 			if err != nil {
-				log.Println("Unable to read data")
+				log.Println("Client disconnected")
+				removeConn(connSlice, conn)
+				break
 			}
 
-			uniqueAddr = conn.RemoteAddr()
-			messages <- s
+			senderAddr = conn.RemoteAddr()
+			messages <- s // ДОБАВИТЬ В НАЧАЛЕ \n
+		}
+	}
+}
+
+func removeConn(connSlice *[]net.Conn, conn net.Conn) {
+	for i, value := range *connSlice {
+		if value == conn {
+			*connSlice = append((*connSlice)[:i], (*connSlice)[i+1:]...)
 		}
 	}
 }
@@ -28,12 +38,12 @@ func msgWorker(connSlice *[]net.Conn, messages chan string) {
 	for {
 		for msg := range messages {
 			for _, conn := range *connSlice {
-				if conn.RemoteAddr() == uniqueAddr {
+				if conn.RemoteAddr() == senderAddr {
 					continue
 				}
 
 				writer := bufio.NewWriter(conn)
-				if _, err := writer.WriteString(msg); err != nil {
+				if _, err := writer.WriteString("\n" + msg + "\n"); err != nil {
 					log.Println("Unable to write data")
 				}
 
@@ -43,14 +53,35 @@ func msgWorker(connSlice *[]net.Conn, messages chan string) {
 	}
 }
 
+func queueWorker(conn net.Conn, connections chan net.Conn, connSlice *[]net.Conn) {
+	writer := bufio.NewWriter(conn)
+	if _, err := writer.WriteString("\nThere is no place, wait\n\n"); err != nil {
+		log.Println("Unable to write data")
+	}
+	writer.Flush()
+
+	for {
+		if len(*connSlice) < cap(connections) {
+			*connSlice = append(*connSlice, conn)
+			connections <- conn
+
+			if _, err := writer.WriteString("\nThe place is free, you can write\n\n"); err != nil {
+				log.Println("Unable to write data")
+			}
+			writer.Flush()
+			break
+		}
+	}
+}
+
 func main() {
-	connections := make(chan net.Conn, 3)
+	connections := make(chan net.Conn, 2)
 	messages := make(chan string)
 
 	connSlice := make([]net.Conn, 0, cap(connections))
 
 	for i := 0; i < cap(connections); i++ {
-		go connWorker(connections, messages)
+		go connWorker(connections, messages, &connSlice)
 	}
 	go msgWorker(&connSlice, messages)
 
@@ -68,8 +99,9 @@ func main() {
 
 		if len(connSlice) < cap(connections) {
 			connSlice = append(connSlice, conn)
+			connections <- conn
+		} else {
+			go queueWorker(conn, connections, &connSlice)
 		}
-		
-		connections <- conn
 	}
 }

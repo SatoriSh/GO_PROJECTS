@@ -3,10 +3,8 @@ package main
 import (
 	"fmt"
 	"net"
-	//"sync" // для синхронизированного сканирования, потому что Go слишком быстрый
 )
 
-// var wg sync.WaitGroup
 var openPorts []int
 
 func main() {
@@ -30,17 +28,6 @@ func main() {
 		}
 	}
 
-	/*
-		wg.Wait() // ждать конца выполнения горутин
-
-		if len(openPorts) > 0 {
-			sortSlace(&openPorts)
-			for _, v := range openPorts {
-				fmt.Println("OPEN\t", v)
-			}
-		}
-	*/
-
 	close(ports)
 	close(results)
 
@@ -63,22 +50,6 @@ func worker(ports, results chan int) {
 		results <- p
 	}
 }
-
-/*
-	func scanPortWithWG(index int) { // тут то же самое то с wg.Wait wg.Done wg.Add...
-		defer wg.Done() // горутина завершила работу; DEFER - команда выполнится при ВЫХОДЕ из функции
-
-		var address string = fmt.Sprintf("scanme.nmap.org:%d", index)
-
-		conn, err := net.Dial("tcp", address)
-		if err != nil {
-			return
-		}
-		conn.Close()
-
-		openPorts = append(openPorts, index)
-	}
-*/
 
 func sortSlice(slice *[]int) {
 	var value2 int
