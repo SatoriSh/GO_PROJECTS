@@ -8,7 +8,7 @@ import (
 var openPorts []int
 
 func main() {
-	ports := make(chan int, 100)
+	ports := make(chan int, 300)
 	results := make(chan int)
 
 	for i := 0; i < cap(ports); i++ {
