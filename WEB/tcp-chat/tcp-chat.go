@@ -21,7 +21,7 @@ func connWorker(connections chan net.Conn, messages chan string, connSlice *[]ne
 			}
 
 			senderAddr = conn.RemoteAddr()
-			messages <- s // ДОБАВИТЬ В НАЧАЛЕ \n
+			messages <- s
 		}
 	}
 }
