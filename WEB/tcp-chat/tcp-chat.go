@@ -46,7 +46,6 @@ func msgWorker(connSlice *[]net.Conn, messages chan string) {
 				if _, err := writer.WriteString("\n" + msg + "\n"); err != nil {
 					log.Println("Unable to write data")
 				}
-
 				writer.Flush()
 			}
 		}
