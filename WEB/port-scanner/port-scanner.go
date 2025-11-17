@@ -1,18 +1,24 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"net"
+	"os"
+	"strings"
+	"unicode/utf8"
 )
 
 var openPorts []int
+var reader = bufio.NewReader(os.Stdin)
 
 func main() {
 	ports := make(chan int, 300)
 	results := make(chan int)
+	address := getAddress()
 
 	for i := 0; i < cap(ports); i++ {
-		go worker(ports, results)
+		go worker(ports, results, address)
 	}
 
 	go func() {
@@ -37,9 +43,9 @@ func main() {
 	}
 }
 
-func worker(ports, results chan int) {
+func worker(ports, results chan int, addressToScan string) {
 	for p := range ports { // выполняется пока канал открыт, RANGE - забирает порт из канала
-		address := fmt.Sprintf("scanme.nmap.org:%d", p)
+		address := net.JoinHostPort(addressToScan, fmt.Sprintf("%d", p))
 		conn, err := net.Dial("tcp", address)
 		if err != nil {
 			results <- 0
@@ -48,6 +54,22 @@ func worker(ports, results chan int) {
 		conn.Close()
 
 		results <- p
+	}
+}
+
+func getAddress() string {
+	for {
+		fmt.Println("Enter the address to scan")
+
+		fmt.Print("--> ")
+		input, err := reader.ReadString('\n')
+		if str := utf8.RuneCountInString(input); err != nil || str < 6 {
+			fmt.Println(err)
+			continue
+		}
+
+		input = strings.TrimSpace(input)
+		return input
 	}
 }
 

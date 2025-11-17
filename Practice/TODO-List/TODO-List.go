@@ -254,7 +254,6 @@ func getMenu() {
 }
 
 func getUserValue() int {
-
 	fmt.Print("\n --> ")
 
 	input, err := reader.ReadString('\n')
@@ -267,7 +266,7 @@ func getUserValue() int {
 	input = strings.TrimSpace(input)
 	choice, err := strconv.Atoi(input)
 	if err != nil {
-		fmt.Println("Ошибка: нужно ввести число")
+		fmt.Println("Ошибка, введите корректное значение")
 		reader.ReadString('\n')
 		return -1
 	}
