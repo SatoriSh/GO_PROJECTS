@@ -21,6 +21,8 @@ func connWorker(connections chan net.Conn, messages chan string, connSlice *[]ne
 			}
 
 			senderAddr = conn.RemoteAddr()
+			s = senderAddr.String() + ": " + s
+			s = s[6:]
 			messages <- s
 		}
 	}
