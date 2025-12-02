@@ -7,17 +7,19 @@ import (
 
 var timeout bool = false
 var duration int = 10
-var gorutinesCount int = 25000
+var gorutinesCount int = 200000
 
 func main() {
-	stressTimer := time.NewTimer(time.Duration(duration) * time.Second)
-
-	fmt.Println("\nИнициализация,", gorutinesCount, "горутин...")
+	fmt.Println("\nИнициализация...")
+	fmt.Println()
 	for i := 0; i < gorutinesCount; i++ {
 		go worker()
+		fmt.Printf("\rСоздано горутин: %d/%d", i+1, gorutinesCount)
 	}
 	fmt.Println("\nГотово.")
 
+	start := time.Now().Round(time.Second)
+	stressTimer := time.NewTimer(time.Duration(duration) * time.Second)
 	go func() {
 		<-stressTimer.C
 		timeout = true
@@ -27,11 +29,9 @@ func main() {
 		ticker := time.NewTicker(1 * time.Second)
 		defer ticker.Stop()
 
-		seconds := 0
-
+		fmt.Println()
 		for range ticker.C {
-			seconds++
-			fmt.Printf("\n\r%d ", seconds)
+			fmt.Printf("\r%v ", time.Since(start))
 
 			if timeout {
 				break
@@ -40,6 +40,7 @@ func main() {
 	}()
 
 	time.Sleep(time.Duration(duration) * time.Second)
+	fmt.Printf("\r%v ", time.Since(start))
 }
 
 func worker() {
@@ -47,5 +48,6 @@ func worker() {
 		if timeout {
 			break
 		}
+		time.Sleep(10 * time.Millisecond)
 	}
 }
