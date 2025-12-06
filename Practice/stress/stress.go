@@ -7,7 +7,7 @@ import (
 
 var timeout bool = false
 var duration int = 10
-var gorutinesCount int = 200000
+var gorutinesCount int = 300000
 
 func main() {
 	fmt.Println("\nИнициализация...")
