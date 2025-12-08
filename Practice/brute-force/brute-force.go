@@ -28,16 +28,23 @@ func main() {
 		str = append(str, "")
 	}
 
-	brute(str, 0)
+	maxPasswdLength := 20
+
+	for len := 4; len <= maxPasswdLength; len++ {
+		brute(str, 0, len)
+		if stop {
+			break
+		}
+	}
 }
 
-func brute(str []string, index int) {
+func brute(str []string, index int, passwdLength int) {
 	for i := 0; i < len(syms); i++ {
 		str[index] = syms[i]
 		fmt.Print(" ", str) // TOO LONG!!!
 
-		if index < len(passwd)-1 {
-			brute(str, index+1)
+		if index < passwdLength-1 {
+			brute(str, index+1, passwdLength)
 		}
 		if stop {
 			break
