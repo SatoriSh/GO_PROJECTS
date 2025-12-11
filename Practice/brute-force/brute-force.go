@@ -2,57 +2,62 @@ package main
 
 import (
 	"bufio"
+	"crypto/md5"
 	"fmt"
 	"os"
-	"reflect"
 	"strings"
 )
 
-var passwd = []string{}
-var syms = []string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "!", "$", "-", "_", "@"}
-var str = []string{}
+var passwdHash string
+var myHash string
+var charset = []byte("0123456789!$-_@#abcdefghijklmnopqrstuvwxyz")
 var stop bool = false
 var reader = bufio.NewReader(os.Stdin)
 
 func main() {
-	fmt.Println("\nEnter your password:")
+	fmt.Println("\nEnter your hash:")
 	fmt.Print("/> ")
 	input, err := reader.ReadString('\n')
 	if err != nil {
 		fmt.Println("Error:", err.Error())
 	}
-	input = strings.TrimSpace(input)
+	passwdHash = strings.TrimSpace(input)
 
-	for _, ch := range input {
-		passwd = append(passwd, string(ch))
-		str = append(str, "")
-	}
+	fmt.Println()
 
 	maxPasswdLength := 20
-
-	for len := 4; len <= maxPasswdLength; len++ {
-		brute(str, 0, len)
+	for len := 1; len <= maxPasswdLength; len++ {
+		candidate := make([]byte, len)
+		brute(candidate, 0, len)
 		if stop {
 			break
 		}
 	}
 }
 
-func brute(str []string, index int, passwdLength int) {
-	for i := 0; i < len(syms); i++ {
-		str[index] = syms[i]
-		fmt.Print(" ", str) // TOO LONG!!!
+func brute(candidate []byte, index int, passwdLength int) {
+	for _, ch := range charset {
+		candidate[index] = ch
+		//fmt.Print("\r ", string(candidate)) // TOO LONG!!!
 
 		if index < passwdLength-1 {
-			brute(str, index+1, passwdLength)
+			brute(candidate, index+1, passwdLength)
 		}
 		if stop {
 			break
 		}
-		if reflect.DeepEqual(str, passwd) {
-			fmt.Println("\n\nDONE! Here is your password:", passwd)
+		if hashEqual(candidate) {
+			fmt.Println("\n\n", "hash", string(candidate), "=", passwdHash)
+			fmt.Println("\n\n DONE! Here is your password:", string(candidate))
 			stop = true
 			break
 		}
 	}
+}
+
+func hashEqual(candidate []byte) bool {
+	sum := md5.Sum(candidate)
+	myHash = fmt.Sprintf("%x", sum)
+
+	return myHash == passwdHash
 }
