@@ -22,13 +22,7 @@ func (t *Task) MarkComplete()    { t.Completed = true }
 func (t *Task) MarkNotComplete() { t.Completed = false }
 
 func main() {
-	getMenu()
-}
-
-func UpdateText(t *Task) {
-	fmt.Println("Введите новый текст для", t.Id)
-	input1, _ := reader.ReadString('\n')
-	t.Text = input1
+	showMenu()
 }
 
 func PrintAllTasks() {
@@ -36,15 +30,15 @@ func PrintAllTasks() {
 
 	for index, task := range tasks {
 		if index != 0 {
-			fmt.Printf("\n%d: %s\n Completed: %t\n", task.Id, task.Text, task.Completed)
+			fmt.Printf("\n%d: %s\n Terminé: %t\n", task.Id, task.Text, task.Completed)
 		} else {
-			fmt.Printf("%d: %s\n Completed: %t\n", task.Id, task.Text, task.Completed)
+			fmt.Printf("%d: %s\n Terminé: %t\n", task.Id, task.Text, task.Completed)
 		}
 	}
 
-	fmt.Println("\nНажмите'Enter' чтобы вернуться в меню")
+	fmt.Println("\nAppuyez sur 'Entrée' pour revenir au menu")
 	reader.ReadString('\n')
-	getMenu()
+	showMenu()
 }
 
 func AddTask() {
@@ -52,28 +46,28 @@ func AddTask() {
 	for {
 		clearConsole()
 
-		fmt.Println("Введите текст задачи:")
+		fmt.Println("Entrez le texte de la tâche :")
 		input, err := reader.ReadString('\n')
 		if err != nil {
-			fmt.Println("Ошибка сохранения текста")
+			fmt.Println("Erreur lors de l'enregistrement du texte")
 			reader.ReadString('\n')
 			break
 		}
 
 		text = strings.TrimSpace(input)
 		if len(text) < 4 {
-			fmt.Println("Ошибка, введите минимум 4 символа")
+			fmt.Println("Erreur, veuillez entrer au moins 4 caractères")
 			reader.ReadString('\n')
 			continue
 		}
 
 		tasks = append(tasks, Task{Id: getMaxIdValue(), Text: text, Completed: false})
 
-		fmt.Println("\nЗадача успешно создана, её ID:", tasks[len(tasks)-1].Id)
+		fmt.Println("\nTâche créée avec succès, son ID :", tasks[len(tasks)-1].Id)
 
-		fmt.Println("\nНажмите'Enter' чтобы вернуться в меню")
+		fmt.Println("\nAppuyez sur 'Entrée' pour revenir au menu")
 		reader.ReadString('\n')
-		getMenu()
+		showMenu()
 	}
 }
 
@@ -83,7 +77,7 @@ func setCompleteStatus(status bool) {
 	for {
 		clearConsole()
 
-		fmt.Println("Введите ID задачи которую хотите пометить как выполненную")
+		fmt.Println("Entrez l'ID de la tâche que vous souhaitez marquer comme terminée")
 		id = getUserValue()
 		if id == -1 {
 			continue
@@ -91,7 +85,7 @@ func setCompleteStatus(status bool) {
 
 		task, err := getTask(id)
 		if err != nil {
-			fmt.Println("\nОшибка, задачи с таким ID не существует.")
+			fmt.Println("\nErreur, aucune tâche avec cet ID n'existe.")
 			reader.ReadString('\n')
 			continue
 		}
@@ -102,11 +96,11 @@ func setCompleteStatus(status bool) {
 			task.MarkNotComplete()
 		}
 
-		fmt.Println("Задача с ID", id, "была успешно помечена как", task.Completed) // почемуто здесь всегда false
+		fmt.Println("La tâche avec l'ID", id, "a été marquée avec succès comme", task.Completed)
 
-		fmt.Println("\nНажмите'Enter' чтобы вернуться в меню")
+		fmt.Println("\nAppuyez sur 'Entrée' pour revenir au menu")
 		reader.ReadString('\n')
-		getMenu()
+		showMenu()
 		break
 	}
 }
@@ -117,7 +111,7 @@ func ViewTask() {
 	for {
 		clearConsole()
 
-		fmt.Println("Введите ID задачи которую хотите просмотреть")
+		fmt.Println("Entrez l'ID de la tâche que vous souhaitez consulter")
 		id = getUserValue()
 		if id == -1 {
 			continue
@@ -125,16 +119,16 @@ func ViewTask() {
 
 		task, err := getTask(id)
 		if err != nil {
-			fmt.Println("\nОшибка, задачи с таким ID не существует.")
+			fmt.Println("\nErreur, aucune tâche avec cet ID n'existe.")
 			reader.ReadString('\n')
 			continue
 		}
 
-		fmt.Printf("%d: %s\n Completed: %t\n", task.Id, task.Text, task.Completed)
+		fmt.Printf("%d: %s\n Terminé: %t\n", task.Id, task.Text, task.Completed)
 
-		fmt.Println("\nНажмите'Enter' чтобы вернуться в меню")
+		fmt.Println("\nAppuyez sur 'Entrée' pour revenir au menu")
 		reader.ReadString('\n')
-		getMenu()
+		showMenu()
 		break
 	}
 }
@@ -146,7 +140,7 @@ func DeleteTask() {
 	for {
 		clearConsole()
 
-		fmt.Println("Введите ID задачи которую хотите удалить")
+		fmt.Println("Entrez l'ID de la tâche que vous souhaitez supprimer")
 
 		id = getUserValue()
 
@@ -161,18 +155,17 @@ func DeleteTask() {
 		}
 
 		if indexInSlice == -1 {
-			fmt.Println("\nОшибка, задачи с таким ID не существует. ")
+			fmt.Println("\nErreur, aucune tâche avec cet ID n'existe. ")
 			reader.ReadString('\n')
 			continue
 		} else {
 			tasks = append(tasks[:indexInSlice], tasks[indexInSlice+1:]...)
 
-			fmt.Printf("Задача с id %d была успешно удалена.", id)
-			orderTasks()
+			fmt.Printf("La tâche avec l'ID %d a été supprimée avec succès.", id)
 
-			fmt.Println("\nНажмите'Enter' чтобы вернуться в меню")
+			fmt.Println("\nAppuyez sur 'Entrée' pour revenir au menu")
 			reader.ReadString('\n')
-			getMenu()
+			showMenu()
 			break
 		}
 	}
@@ -185,13 +178,7 @@ func getTask(id int) (*Task, error) { // *Task - возвращаем указа
 		}
 	}
 
-	return &Task{}, errors.New("Task not found")
-}
-
-func orderTasks() {
-	for i := 0; i < len(tasks); i++ {
-		tasks[i].Id = i + 1
-	}
+	return &Task{}, errors.New("tâche non trouvée")
 }
 
 func getMaxIdValue() int {
@@ -205,18 +192,18 @@ func getMaxIdValue() int {
 	return maxIdValue + 1
 }
 
-func getMenu() {
+func showMenu() {
 	for {
 		clearConsole()
 
-		fmt.Printf("Меню\n\n")
-		fmt.Println("(1) Добавить задачу")
-		fmt.Println("(2) Удалить задачу")
-		fmt.Println("(3) Пометить как выполненную")
-		fmt.Println("(4) Пометить как не выполненную")
-		fmt.Println("(5) Посмотреть задачу")
-		fmt.Println("(6) Посмотреть все задачи")
-		fmt.Println("(7) Выйти")
+		fmt.Printf("\tMenu\n\n")
+		fmt.Println("(1) Ajouter une tâche")
+		fmt.Println("(2) Supprimer une tâche")
+		fmt.Println("(3) Marquer comme terminée")
+		fmt.Println("(4) Marquer comme non terminée")
+		fmt.Println("(5) Voir une tâche")
+		fmt.Println("(6) Voir toutes les tâches")
+		fmt.Println("(7) Quitter")
 
 		switch getUserValue() {
 		case 1:
@@ -242,11 +229,12 @@ func getMenu() {
 				PrintAllTasks()
 			}
 		case 7:
+			clearConsole()
 			os.Exit(0)
 		case -1: // error
 			continue
 		default:
-			fmt.Println("Такой опции не существует.")
+			fmt.Println("Cette option n'existe pas.")
 			reader.ReadString('\n')
 			continue
 		}
@@ -258,7 +246,7 @@ func getUserValue() int {
 
 	input, err := reader.ReadString('\n')
 	if err != nil {
-		fmt.Println("Ошибка чтения ввода:", err)
+		fmt.Println("Erreur de lecture de l'entrée :", err)
 		reader.ReadString('\n')
 		return -1
 	}
@@ -266,7 +254,7 @@ func getUserValue() int {
 	input = strings.TrimSpace(input)
 	choice, err := strconv.Atoi(input)
 	if err != nil {
-		fmt.Println("Ошибка, введите корректное значение")
+		fmt.Println("Erreur, veuillez entrer une valeur correcte")
 		reader.ReadString('\n')
 		return -1
 	}
@@ -278,7 +266,7 @@ func checkTasksCount() bool {
 	if len(tasks) > 0 {
 		return true
 	} else {
-		fmt.Println("\nУ вас нет ни одной задачи чтобы выполнить это действие.")
+		fmt.Println("\nVous n'avez aucune tâche pour effectuer cette action.")
 		reader.ReadString('\n')
 		return false
 	}
