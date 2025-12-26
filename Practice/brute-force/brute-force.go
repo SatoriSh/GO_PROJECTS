@@ -9,7 +9,7 @@ import (
 )
 
 var passwdHash string
-var myHash string
+var candidateHash string
 var charset = []byte("0123456789!$-_@#abcdefghijklmnopqrstuvwxyz")
 var stop bool = false
 var reader = bufio.NewReader(os.Stdin)
@@ -57,7 +57,7 @@ func brute(candidate []byte, index int, passwdLength int) {
 
 func hashEqual(candidate []byte) bool {
 	sum := md5.Sum(candidate)
-	myHash = fmt.Sprintf("%x", sum)
+	candidateHash = fmt.Sprintf("%x", sum)
 
-	return myHash == passwdHash
+	return candidateHash == passwdHash
 }
