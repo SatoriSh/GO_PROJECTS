@@ -10,13 +10,13 @@ var duration int = 10
 var gorutinesCount int = 300000
 
 func main() {
-	fmt.Println("\nИнициализация...")
+	fmt.Println("\nInitialization...")
 	fmt.Println()
 	for i := 0; i < gorutinesCount; i++ {
 		go worker()
-		fmt.Printf("\rСоздано горутин: %d/%d", i+1, gorutinesCount)
+		fmt.Printf("\rGoroutines created: %d/%d", i+1, gorutinesCount)
 	}
-	fmt.Println("\nГотово.")
+	fmt.Println("\nDone.")
 
 	start := time.Now().Round(time.Second)
 	stressTimer := time.NewTimer(time.Duration(duration) * time.Second)
