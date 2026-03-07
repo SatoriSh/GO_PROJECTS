@@ -8,8 +8,8 @@ from termcolor import colored
 pygame.mixer.init(frequency=44100, size=-16, channels=2, buffer=512)
 pygame.mixer.set_num_channels(32)
 
-soundPath = "/home/lain/Music/factorio-attack-alert.wav"
-VPNPath   = "/home/lain/vpnbook-openvpn-de20/vpnbook-de20-tcp443.ovpn"
+soundPath = "/home/user/Music/factorio-attack-alert.wav"
+VPNPath   = "/home/user/vpnbook-openvpn-de20/vpnbook-de20-tcp443.ovpn"
 
 myIP = ""
 
